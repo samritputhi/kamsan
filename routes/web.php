@@ -15,8 +15,6 @@ use App\Http\Controllers\Auth\LoginController;
 */
 
 
-Route::get('/', function () {
-    return view('welcome');
-});
-
-Route::post('/signup',[LoginController::class,'createUser'])->name("user.create");
+Route::post('signup', [LoginController::class, 'signupUser'])->name('signup');
+Route::post('login', [LoginController::class, 'loginUser'])->name('login');
+Route::post('logout', [LoginController::class, 'logoutUser'])->middleware('auth')->name('logout');

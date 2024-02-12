@@ -17,6 +17,7 @@ class LoginController extends Controller
                 'email' => 'required|string|email', 
                 'password' => 'required|string', 
             ]);
+            
             $user = User::create([
                 'name' => $validatedUser['name'],
                 'email' => $validatedUser['email'],
@@ -31,17 +32,18 @@ class LoginController extends Controller
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => false,
-                'message' => $th->getMessage()
+                'message' => $th->errors()
             ], 500);
         }
     }
 
     public function loginUser(Request $request) {
+
         $credentials = $request->validate([
             'email' => 'required|email', 
             'password' => 'required|string',
         ]);
-    
+
         if (!Auth::attempt($credentials)) {
             return response()->json([
                 'status' => false,
@@ -59,5 +61,11 @@ class LoginController extends Controller
             'token' => $token
         ], 200);
     }
-    
+
+    public function logoutUser(Request $request) {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/login');
+    }
 }

@@ -16,9 +16,10 @@ use App\Http\Controllers\Auth\LoginController;
 */
 
 
-Route::post('/signup', [LoginController::class, 'createUser'])->name('user.create');
-Route::post('/login', [LoginController::class, 'loginUser'])->name('user.login');
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+
+
