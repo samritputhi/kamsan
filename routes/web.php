@@ -14,7 +14,3 @@ use App\Http\Controllers\Auth\LoginController;
 |
 */
 
-
-Route::post('signup', [LoginController::class, 'signupUser'])->name('signup');
-Route::post('login', [LoginController::class, 'loginUser'])->name('login');
-Route::post('logout', [LoginController::class, 'logoutUser'])->middleware('auth')->name('logout');
