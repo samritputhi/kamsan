@@ -18,6 +18,13 @@ class CategoryController extends Controller
                 'order' => 'required', 
                 'status' => 'required' 
             ]);
+            $existingCategory = Category::where('name', $request->name)->exists();
+            if ($existingCategory) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'A category with the same name already exists.'
+                ], 409); // 409 Conflict
+            }
             $category = Category::create($validatedData);
             return response()->json([
                 'status' => true,
@@ -63,14 +70,14 @@ class CategoryController extends Controller
                 ], 404);
             }
 
-            // $itemsArray = Category::get();
-            // dd($itemsArray->array());
-            // if (in_array($validatedData['name'], $itemsArray->array())) {
-            //     return response()->json([
-            //         'status' => false,
-            //         'message' => 'Duplicate name found in the provided items array.'
-            //     ], 422);
-            // }
+            $existingCategory = Category::where('name', $request->name)->exists();
+            if ($existingCategory) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'A category with the same name already exists.'
+                ], 409); // 409 Conflict
+            }
+
             $category->update($validatedData);
             return response()->json([
                 'status' => true,
