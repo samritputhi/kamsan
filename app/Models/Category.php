@@ -15,4 +15,9 @@ class Category extends Model
         'order',
         'status'
     ];
+
+    public function news(): HasMany
+    {
+        return $this->hasMany(News::class);
+    }
 }

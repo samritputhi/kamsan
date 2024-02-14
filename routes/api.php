@@ -17,28 +17,35 @@ use App\Http\Controllers\Api\{Category\CategoryController,News\NewsController};
 |
 */
 
-
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// User Authentication Routes
+Route::middleware('auth:sanctum')->get('/user', fn(Request $request) => $request->user());
 Route::post('/signup', [LoginController::class, 'createUser'])->name('signup');
 Route::post('/login', [LoginController::class, 'loginUser'])->name('login');
 Route::post('/logout', [LoginController::class, 'logoutUser'])->middleware('auth')->name('logout');
 
-Route::post('/category/create', [CategoryController::class, 'create']);
-Route::post('/category/edit/{id}', [CategoryController::class, 'update']);
-Route::get('/category/index', [CategoryController::class, 'index']);
-Route::get('/category/detail/{id}', [CategoryController::class, 'detail']);
-Route::get('/category', [CategoryController::class, 'search']);
+// Category Routes
+Route::prefix('category')->controller(CategoryController::class)->group(function () {
+    Route::get('/orders/{id}', 'show')->name('category.show');
+    Route::post('/orders', 'store')->name('category.store');
+    Route::post('/create', 'create')->name('category.create');
+    Route::post('/edit/{id}', 'update')->name('category.update');
+    Route::get('/index', 'index')->name('category.index');
+    Route::get('/detail/{id}', 'detail')->name('category.detail');
+    Route::get('/', 'search')->name('category.search');
+});
+
+// News Routes
+Route::prefix('news')->controller(NewsController::class)->group(function () {
+    Route::post('/create', 'create')->name('news.create');
+    Route::get('/index', 'index')->name('news.index');
+    Route::get('/detail/{id}', 'detail')->name('news.detail');
+    Route::post('/edit/{id}', 'update')->name('news.update');
+    Route::post('/delete/{id}', 'delete')->name('news.delete');
+    Route::get('/', 'search')->name('news.search');
+});
 
 
-Route::post('/news/create', [NewsController::class, 'create']);
-Route::get('/news/index', [NewsController::class, 'index']);
-Route::get('/news/detail/{id}', [NewsController::class, 'detail']);
-Route::post('/news/edit/{id}', [NewsController::class, 'update']);
-Route::post('/news/delete/{id}', [NewsController::class, 'delete']);
-Route::get('/news', [NewsController::class, 'search']);
+
 
 
 

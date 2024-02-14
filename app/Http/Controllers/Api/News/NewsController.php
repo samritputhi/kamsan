@@ -119,7 +119,7 @@ class NewsController extends Controller
         $search = $request->input("search");
         if(!empty($search )) {
             $news = News::where("title", 'like' , "%$search%")
-                    ->orWhere('category_id', 'LIKE', "%{$search}%")
+                    ->orWhere('category_id', 'LIKE', "%{$search}%") 
                     ->get();
             return response()->json([
                 'status' => true,

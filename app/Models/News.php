@@ -11,4 +11,8 @@ class News extends Model
     protected $fillable = [
         "title","category_id","order","status","image","des"
     ];
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
+    }
 }
