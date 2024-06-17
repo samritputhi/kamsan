@@ -1,0 +1,79 @@
+version: '3.4'
+services:
+
+  #PHP Service
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: KorkPring
+    restart: always
+    tty: true
+    environment:
+        SERVICE_NAME: KorkPring
+        SERVICE_TAGS: dev
+    working_dir: /var/www
+    volumes:
+       - .:/var/www
+       - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - kork-pring-network
+
+  #Nginx Service
+  webserver:
+    image: nginx:alpine
+    container_name: khmer-agriculture-webserver
+    restart: always
+    tty: true
+    ports:
+      - "8886:80"
+    volumes:
+      - .:/var/www
+      - ./docker/nginx/conf.d/:/etc/nginx/conf.d
+    networks:
+      - kork-pring-network
+
+  #MySQL Service
+  db:
+    image: mysql:8.0.29
+    platform: linux/amd64
+    container_name: kork-pring-db
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    tty: true
+    ports:
+      - "3386:3306"
+    environment:
+      MYSQL_DATABASE: kork_pring_db
+      MYSQL_ROOT_PASSWORD: UddamIt@2020
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      - kork-pring:/var/lib/mysql
+    networks:
+      - kork-pring-network
+
+  #phpmyadmin for db access
+  pma:
+    image: phpmyadmin/phpmyadmin:latest
+    depends_on:
+      - db
+    restart: always
+    container_name: kork-pring-phpmyadmin
+    environment:
+      PMA_HOST: db
+      UPLOAD_LIMIT: 100000000000
+    ports:
+      - "8086:80"
+    networks:
+      - kork-pring-network
+
+#Docker Networks
+networks:
+  kork-pring-network:
+    driver: bridge
+
+#Volumes
+volumes:
+  kork-pring:
+    driver: local

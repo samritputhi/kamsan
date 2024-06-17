@@ -3,8 +3,9 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Api\{Category\CategoryController,News\NewsController};
+use App\Http\Controllers\Api\{Category\CategoryController,News\NewsController,Dashboard\DashboardController};
 use App\Http\Controllers\AuthController;
+use App\Models\Ticket;
 // use App\Http\Controllers\Api\News\NewsController;
 
 /*
@@ -25,15 +26,16 @@ use App\Http\Controllers\AuthController;
 
 Route::middleware('auth:sanctum')->get('/user', fn(Request $request) => $request->user());
 
-
-// Authentication routes
+Route::get('/ticket',function() {
+    return Ticket::get();
+});
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
-Route::post('logout', [AuthController::class, 'logout'])->middleware('jwt.auth');
 
-// Group routes that require authentication
+
 Route::group(['middleware' => ['jwt.auth']], function() {
-
+    Route::post('logout', [AuthController::class, 'logout']);
+    Route::get('/dashboard', DashboardController::class)->name('dashboard');
     // Category routes
     Route::prefix('category')->controller(CategoryController::class)->group(function () {
         Route::get('/orders/{id}', 'show')->name('category.show');
